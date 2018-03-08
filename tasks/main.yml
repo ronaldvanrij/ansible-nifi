@@ -55,13 +55,13 @@
     backup: yes
   tags: [setup]
 
-- name: create /etc/hosts from host inventory
-  template:
-    src: templates/hosts.j2
-    dest: /etc/hosts
-    mode: 0644
-    backup: yes
-  tags: [setup]
+#- name: create /etc/hosts from host inventory
+#  template:
+#    src: templates/hosts.j2
+#    dest: /etc/hosts
+#    mode: 0644
+#    backup: yes
+#  tags: [setup]
 
 - name: create nifi system group
   group:
@@ -230,7 +230,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
-  with_indexed_items: "{{ ansible_play_hosts }}"
+  with_indexed_items: "{{ nifi_cluster_members }}"
   when: nifi_cluster_is_node|bool and nifi_zk_use_embedded|bool
   tags: [conf,cluster,zookeeper]
 
@@ -272,6 +272,18 @@
     backup: yes
   when: nifi_install_service|bool
   tags: [conf,systemd]
+
+# Eventough NiFi will want to create this directory by itself, I don't want to give it permission
+# to create directories in /var/run.
+- name: Create /var/run/nifi with the correct user
+  file:
+    path: /var/run/nifi
+    owner: "{{ nifi_run_as }}"
+    group: "{{ nifi_run_as }}"
+    state: directory
+
+- name: Create tmpfiles.d entry so that /var/run/nifi will be created on reboot
+  template: src=templates/nifi.conf.j2 dest=/usr/lib/tmpfiles.d/nifi.conf owner=root group=root
 
 - name: enable nifi.service
   service:
