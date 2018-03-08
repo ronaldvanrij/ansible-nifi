@@ -16,15 +16,13 @@ nifi_web_http_port: 8080
 nifi_cluster_is_node: False
 nifi_cluster_node_protocol_port: 10101
 nifi_zk_use_embedded: False
-nifi_zk_connect_string: "{{ ansible_play_hosts | join(':2181,') }}:2181"
+nifi_zk_connect_string: "{{ nifi_cluster_members | join(':2181,') }}:2181"
 nifi_zk_port_range: 2888:3888
 hortonworks: true
 
 hdf_version: 2.1.2.0-10
 hdf_nifi_version: 1.1.0.2.1.2.0-10
 hdf_release_archive: https://public-repo-1.hortonworks.com/HDF
-hdf_nifi_package_url: "{{ hdf_release_archive }}/{{ hdf_version | regex_replace('^(.*)\\-\\d+$', '\\1') }}/nifi-{{ hdf_nifi_version }}-bin.zip"
-hdf_nifi_toolkit_package_url: "{{ hdf_release_archive }}/{{ hdf_version | regex_replace('^(.*)\\-\\d+$', '\\1') }}/nifi-toolkit-{{ hdf_nifi_version }}-bin.zip"
 hdf_install_root: /usr/hdf
 hdf_install_dir: "{{ hdf_install_root }}/{{ hdf_version }}/nifi"
 hdf_toolkit_install_dir: "{{ hdf_install_root }}/{{ hdf_version }}/nifi-toolkit-{{ hdf_nifi_version }}"
