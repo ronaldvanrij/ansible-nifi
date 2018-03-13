@@ -11,3 +11,6 @@ ExecStart={{ nifi_install_dir }}/bin/nifi.sh start
 ExecStop={{ nifi_install_dir }}/bin/nifi.sh stop
 Restart=on-failure
 RestartSec=60s
+
+[Install]
+WantedBy=default.target

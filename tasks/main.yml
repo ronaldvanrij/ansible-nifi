@@ -140,6 +140,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf]
 
 - name: set site-to-site port to {{ nifi_remote_input_socket_port }} in nifi.properties
@@ -150,6 +151,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf]
 
 - name: set web http hostname to {{ inventory_hostname }} in nifi.properties
@@ -160,6 +162,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf]
 
 - name: set web http port to {{ nifi_web_http_port }} in nifi.properties
@@ -170,6 +173,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf]
 
 - name: set cluster is node to {{ nifi_cluster_is_node | lower }} in nifi.properties
@@ -180,6 +184,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf,cluster]
 
 - name: set cluster node address to {{ inventory_hostname }} in nifi.properties
@@ -190,6 +195,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf,cluster]
 
 - name: set cluster node protocol port to {{ nifi_cluster_node_protocol_port }} in nifi.properties
@@ -200,6 +206,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf,cluster]
 
 - name: set enable embedded zookeeper to {{ nifi_zk_use_embedded | lower }} in nifi.properties
@@ -210,6 +217,7 @@
     owner: "{{ nifi_run_as }}"
     group: "{{ nifi_run_as }}"
     backup: yes
+  notify: restart nifi
   tags: [conf,cluster,zookeeper]
 
 - name: set zookeeper connect string to {{ nifi_zk_connect_string }} in nifi.properties
@@ -246,7 +254,7 @@
 
 - name: set zookeeper id in zookeeper myid file
   copy:
-    content: "{{ ansible_play_hosts.index(inventory_hostname) + 1 }}"
+    content: "{{ nifi_cluster_members.index(inventory_hostname) + 1 }}"
     dest: "{{ nifi_install_dir }}/state/zookeeper/myid"
     mode: 0644
     owner: "{{ nifi_run_as }}"
@@ -273,6 +281,14 @@
   when: nifi_install_service|bool
   tags: [conf,systemd]
 
+- name: enable nifi.service
+  service:
+    name: nifi
+    state: started
+    enabled: yes
+  when: nifi_install_service|bool
+  tags: [conf,systemd]
+
 # Eventough NiFi will want to create this directory by itself, I don't want to give it permission
 # to create directories in /var/run.
 - name: Create /var/run/nifi with the correct user
@@ -285,10 +301,3 @@
 - name: Create tmpfiles.d entry so that /var/run/nifi will be created on reboot
   template: src=templates/nifi.conf.j2 dest=/usr/lib/tmpfiles.d/nifi.conf owner=root group=root
 
-- name: enable nifi.service
-  service:
-    name: nifi
-    state: started
-    enabled: yes
-  when: nifi_install_service|bool
-  tags: [conf,systemd]
