@@ -14,4 +14,26 @@
   when: ansible_os_family == "RedHat" and hortonworks|bool
   tags: [install,hortonworks]
 
-- file: dest={{hdf_install_dir}} owner={{nifi_run_as}} group={{nifi_run_as}} recurse=yes
+- name: Ensure installation files are owned by {{nifi_run_as}}:{{nifi_run_as}}
+  file:
+    dest: "{{hdf_install_dir}}"
+    owner: "{{nifi_run_as}}"
+    group: "{{nifi_run_as}}"
+    recurse: yes
+  tags: [install,hortonworks]
+
+- name: Ensure configuration files are owned by {{nifi_run_as}}:{{nifi_run_as}}
+  file:
+    dest: "/etc/nifi"
+    owner: "{{nifi_run_as}}"
+    group: "{{nifi_run_as}}"
+    recurse: yes
+  tags: [install,hortonworks]
+
+- name: Ensure log files are owned by {{nifi_run_as}}:{{nifi_run_as}}
+  file:
+    dest: "/var/log/nifi"
+    owner: "{{nifi_run_as}}"
+    group: "{{nifi_run_as}}"
+    recurse: yes
+  tags: [install,hortonworks]
