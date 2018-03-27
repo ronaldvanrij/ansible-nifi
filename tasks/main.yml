@@ -143,6 +143,17 @@
   notify: restart nifi
   tags: [conf]
 
+- name: set nifi.remote.input.http.enabled to {{ nifi_remote_input_http_enabled }} in nifi.properties
+  lineinfile:
+    dest: "{{ nifi_install_dir }}/conf/nifi.properties"
+    regexp: '^nifi\.remote\.input\.http\.enabled=.*'
+    line: nifi.remote.input.http.enabled={{ nifi_remote_input_http_enabled }}
+    owner: "{{ nifi_run_as }}"
+    group: "{{ nifi_run_as }}"
+    backup: yes
+  notify: restart nifi
+  tags: [conf]
+
 - name: set site-to-site port to {{ nifi_remote_input_socket_port }} in nifi.properties
   lineinfile:
     dest: "{{ nifi_install_dir }}/conf/nifi.properties"

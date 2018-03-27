@@ -20,6 +20,8 @@ nifi_zk_connect_string: "{{ nifi_cluster_members | join(':2181,') }}:2181"
 nifi_zk_port_range: 2888:3888
 hortonworks: true
 
+nifi_remote_input_http_enabled: true
+
 hdf_version: 2.1.2.0-10
 hdf_nifi_version: 1.1.0.2.1.2.0-10
 hdf_release_archive: https://public-repo-1.hortonworks.com/HDF
