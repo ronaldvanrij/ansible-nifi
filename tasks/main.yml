@@ -251,6 +251,7 @@
     backup: yes
   with_indexed_items: "{{ nifi_cluster_members }}"
   when: nifi_cluster_is_node|bool and nifi_zk_use_embedded|bool
+  notify: restart nifi
   tags: [conf,cluster,zookeeper]
 
 - name: create "{{ nifi_install_dir }}/state/zookeeper" directory
