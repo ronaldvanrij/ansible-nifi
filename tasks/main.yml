@@ -132,6 +132,17 @@
     backup: yes
   tags: [conf]
 
+- name: set content repository directory to {{ nifi_content_repository_directory_default }} in nifi.properties
+  lineinfile:
+    dest: "{{ nifi_install_dir }}/conf/nifi.properties"
+    regexp: '^nifi\.content\.repository\.directory\.default=.*'
+    line: nifi.content.repository.directory.default={{ nifi_content_repository_directory_default }}
+    owner: "{{ nifi_run_as }}"
+    group: "{{ nifi_run_as }}"
+    backup: yes
+  notify: restart nifi
+  tags: [conf]
+
 - name: set site-to-site hostname to {{ inventory_hostname }} in nifi.properties
   lineinfile:
     dest: "{{ nifi_install_dir }}/conf/nifi.properties"

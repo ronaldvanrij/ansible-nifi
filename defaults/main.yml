@@ -18,6 +18,7 @@ nifi_cluster_node_protocol_port: 10101
 nifi_zk_use_embedded: False
 nifi_zk_connect_string: "{{ nifi_cluster_members | join(':2181,') }}:2181"
 nifi_zk_port_range: 2888:3888
+nifi_content_repository_directory_default: ./content_repository
 hortonworks: true
 
 nifi_remote_input_http_enabled: true
