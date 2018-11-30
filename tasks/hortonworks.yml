@@ -10,7 +10,9 @@
   tags: [install,hortonworks]
 
 - name: install HDF packages via YUM
-  yum: name=nifi state=present
+  yum:
+    name: "nifi_{{ hdf_version | regex_replace('[\.-]', '_') }}"
+    state: present
   when: ansible_os_family == "RedHat" and hortonworks|bool
   tags: [install,hortonworks]
 
